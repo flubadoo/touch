@@ -16,13 +16,16 @@ int mygetchar()		// like getchar(), but mygetchar() fetches the next char we "wa
 	int ch = getchar();
 
 	if (ch == '"'){
-		while ((ch = getchar()) != '"' && (ch != EOF));
+		while ((ch = getchar()) != '"' && (ch != EOF)){
+			if (ch == '\\'){
+				ch = getchar(); // get the thing after the escape character, the next iteration of the loop will consume it
+			}
+		}
 	}
 
-	if (ch == '\\'){
+	if (ch == '\\'){	// we ignore all escaped characters
+		ch = mygetchar();	//character after the escape is ignored
 		ch = mygetchar();
-		if (ch == '\n')
-			ch = mygetchar();
 	}
 
 	return ch;
@@ -48,8 +51,8 @@ int main(void) {
 	sign = 1;
 	while ((ch = mygetchar()) != EOF)
  	{
- 		if (ch == ' ' || ch == '\n' || ch == '\t' || isspace(ch)) sign = 1;
- 		if (ch == '-') sign = -1;
+ 		if (ch == ' ' || ch == '\n' || ch == '\t' || isspace(ch)) sign = 1;	// ignore whitespace
+ 		if (ch == '-') sign = -1;	// keep track of the sign
 
  		else if (ch >= '1' && ch <= '9'){
  			printf("Found int.\n");

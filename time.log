@@ -1,0 +1,20 @@
+ESTIMATE of time to complete assignment: 5 hours
+
+           Time     Time
+     Date  Started  Spent Work completed
+     ----  -------  ----  --------------
+     1/18  9:00am   1:20  Very carefully read assignment and relevant material in K&R
+     1/18  7:00pm   1:30  Wrote comprehensive pseudocode for the entire assignment
+			  and checked all edge cases and considered approaches to line
+			  splices and quotes
+     1/19  10:00pm  1:20  Converted pseudocode to C. Surprisingly it worked well with 
+			  almost no errors. Quickly debugged.
+                    ----
+                    4:10  TOTAL time spent
+
+Difficulties encountered:
+
+The most difficult part was figuring out to create a buffer for characters to read in
+in order to digit-by-digit replicate the string. Then, the part that took longest was
+debugging the buffer - I didn’t realize I needed to reset the buffer and “flush” it each time. Furthermore, considering how to convert from binary/hexadecimal/octal to decimal
+was also an interesting problem, but thankfully the standard library provides strtol.
