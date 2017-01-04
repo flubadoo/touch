@@ -5,12 +5,31 @@
 #include <string.h>
 
 #define ungetchar(c)  ungetc(c, stdin)    // unread char read from stdin
-#define IN 1
-#define OUT 0
+
 enum {INTE, HEXA, OCTA, BINA};
 long convert(char s[], long sign, int method);
+int mygetchar(void);
 
-long convert(char s[], long sign, int method){
+int mygetchar()		// like getchar(), but mygetchar() fetches the next char we "want", ignoring line splices and quotes
+{
+	int state = 1;	// the 1 state means we ignore and consume ch, 0 means we take the getchar()
+	int ch = getchar();
+
+	if (ch == '"'){
+		while ((ch = getchar()) != '"' && (ch != EOF));
+	}
+
+	if (ch == '\\'){
+		ch = mygetchar();
+		if (ch == '\n')
+			ch = mygetchar();
+	}
+
+	return ch;
+}
+
+long convert(char s[], long sign, int method)
+{
 	if (method == INTE)
 		return sign*strtol(s, NULL, 10);
 	else if (method == HEXA)
@@ -24,10 +43,10 @@ long convert(char s[], long sign, int method){
 int main(void) {
 	int ch, state, nn, sign;
 	char prefix[2];
-	char buffer[35]; //We're not gonna exceed 30 digits
+	char buffer[35]; // We're not gonna exceed 30 digits
 	long total = 0;
 	sign = 1;
-	while ((ch = getchar()) != EOF)
+	while ((ch = mygetchar()) != EOF)
  	{
  		if (ch == ' ' || ch == '\n' || ch == '\t' || isspace(ch)) sign = 1;
  		if (ch == '-') sign = -1;
@@ -36,7 +55,7 @@ int main(void) {
  			printf("Found int.\n");
  			for (int i = 0; isdigit(ch); ++i){
  				buffer[i] = ch;
- 				ch = getchar();
+ 				ch = mygetchar();
  				if (isdigit(ch) == 0){
  					ungetchar(ch);
  					printf("Finished reading int.\n");
@@ -48,14 +67,14 @@ int main(void) {
  			}
 
  		} else if (ch == '0') {
- 			ch = getchar();
+ 			ch = mygetchar();
  			if (ch == 'x' || ch == 'X'){
  				printf("Hexademical found.\n");
- 				ch = getchar();
+ 				ch = mygetchar();
 
  				for (int i = 0; isxdigit(ch); ++i){
  					buffer[i] = ch;
- 					ch = getchar();
+ 					ch = mygetchar();
  					if (isxdigit(ch) == 0){
  						ungetchar(ch);
  						printf("Finished reading hex.\n");
@@ -68,11 +87,11 @@ int main(void) {
 
  			} else if (ch == 'B' || ch == 'b'){
  				printf("Binary found.\n");
- 				ch = getchar();
+ 				ch = mygetchar();
 
  				for (int i = 0; ch == '1' || ch == '0'; ++i){
  					buffer[i] = ch;
- 					ch = getchar();
+ 					ch = mygetchar();
  					if (isdigit(ch) == 0){
  						ungetchar(ch);
  						printf("Finished reading binary.\n");
@@ -88,7 +107,7 @@ int main(void) {
 
  				for (int i = 0; isxdigit(ch); ++i){
  					buffer[i] = ch;
- 					ch = getchar();
+ 					ch = mygetchar();
  					if (isdigit(ch) == 0){
  						ungetchar(ch);
  						printf("Finished reading octal.\n");
@@ -101,6 +120,7 @@ int main(void) {
  				}
 
  			} else {
+ 				fprintf(stderr, "Fatal Error: invalid value entered.\n");
  				ungetchar(ch);
  			}
  		}
